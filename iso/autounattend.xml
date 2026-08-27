@@ -38,17 +38,13 @@
       </DiskConfiguration>
       <ImageInstall>
         <OSImage>
-          <InstallFrom>
-            <MetaData wcm:action="add">
-              <Key>/IMAGE/NAME</Key>
-              <Value>Windows 8.1 Pro</Value>
-            </MetaData>
-          </InstallFrom>
           <InstallTo>
             <DiskID>0</DiskID><PartitionID>2</PartitionID>
           </InstallTo>
         </OSImage>
       </ImageInstall>
+      <!-- Edition-agnostic: installs the (single) image present in the source ISO.
+           If you use a multi-edition retail ISO, set /IMAGE/NAME to the desired edition. -->
       <UserData>
         <AcceptEula>true</AcceptEula>
         <ProductKey>
