@@ -18,11 +18,6 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-trap {
-    Write-Host "!! TRAP at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)"
-    Write-Host ($_.ScriptStackTrace)
-    exit 1
-}
 function Msg($m){ Write-Host ">> $m" }
 
 # 0) admin check
@@ -46,15 +41,12 @@ if (Test-Path $iso) { Remove-Item $iso -Recurse -Force }
 New-Item -ItemType Directory -Force $iso | Out-Null
 Msg "Copying ISO contents (this takes a while)..."
 robocopy "$drive\" $iso /E /NFL /NDL /NJH | Out-Null
-Msg "Copy done."
 Dismount-DiskImage -ImagePath $SourceISO | Out-Null
-Msg "Source ISO dismounted."
 
 # 2) locate install image
-Msg "Locating install image..."
 $wim = Join-Path $iso "sources\install.wim"
 $esd = Join-Path $iso "sources\install.esd"
-if (Test-Path $esd -and -not (Test-Path $wim)) {
+if ((Test-Path $esd) -and -not (Test-Path $wim)) {
     Msg "Converting install.esd -> install.wim (index 1)..."
     dism.exe /Export-Image /SourceImageFile:$esd /SourceIndex:1 /DestinationImageFile:$wim /DestinationName:"Windows 8.1 Pro (LuxeOS)" /Compress:max | Out-Null
 }
@@ -62,9 +54,7 @@ if (Test-Path $esd -and -not (Test-Path $wim)) {
 # 3) mount and inject
 Msg "Mounting install image..."
 New-Item -ItemType Directory -Force $mount | Out-Null
-Msg "Mount dir ready."
 dism.exe /Mount-Image /ImageFile:$wim /Index:1 /MountDir:$mount /Optimize
-Msg "Image mounted."
 
 Msg "Injecting LuxeOS tools into ProgramData\LuxeOS\tools ..."
 New-Item -ItemType Directory -Force $pd | Out-Null
