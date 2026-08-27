@@ -87,8 +87,10 @@ if (-not $oscdimg) { throw "oscdimg.exe not found. Install Windows ADK (Deployme
 
 $etfs  = Join-Path $iso "boot\etfsboot.com"
 $efisys = Join-Path $iso "efi\microsoft\boot\efisys.bin"
-$bootdata = "2#p0,e,b`"$etfs`"#pEF,e,b`"$efisys`""
+$bootdata = "2#p0,e,b$etfs#pEF,e,b$efisys"
 Msg "Building bootable ISO -> $OutputISO"
 & $oscdimg -m -o -u2 -udfver102 -bootdata:$bootdata $iso $OutputISO
+if ($LASTEXITCODE -ne 0) { throw "oscdimg failed (exit $LASTEXITCODE)" }
+if (-not (Test-Path $OutputISO)) { throw "Output ISO was not created: $OutputISO" }
 
 Msg "DONE. LuxeOS ISO: $OutputISO"
