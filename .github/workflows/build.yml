@@ -20,12 +20,19 @@ jobs:
       - name: Install Windows ADK (provides oscdimg)
         shell: pwsh
         run: |
-          Write-Host ">> Downloading ADK web installer"
-          Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/?linkid=2289984" -OutFile adksetup.exe
-          Write-Host ">> Installing Deployment Tools (oscdimg)"
-          Start-Process -FilePath .\adksetup.exe -ArgumentList '/features','OptionId.DeploymentTools','/quiet','/norestart' -Wait
           $p = "${env:ProgramFiles(x86)}\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg\oscdimg.exe"
-          if (Test-Path $p) { Write-Host ">> oscdimg ready: $p" } else { throw "ADK install failed" }
+          if (Test-Path $p) { Write-Host ">> oscdimg already present"; return }
+          # Prefer winget (handles the ADK download correctly)
+          if (Get-Command winget -ErrorAction SilentlyContinue) {
+            Write-Host ">> Installing ADK via winget"
+            winget install -e --accept-package-agreements --accept-source-agreements Microsoft.WindowsADK
+          } elseif (Get-Command choco -ErrorAction SilentlyContinue) {
+            Write-Host ">> Installing ADK via chocolatey"
+            choco install windows-adk -y --no-progress
+          } else {
+            throw "No package manager (winget/choco) available to install ADK."
+          }
+          if (Test-Path $p) { Write-Host ">> oscdimg ready: $p" } else { throw "ADK install failed - oscdimg not found" }
 
       - name: Download Windows 8.1 source ISO
         shell: pwsh
