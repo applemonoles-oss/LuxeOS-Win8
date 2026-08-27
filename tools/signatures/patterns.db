@@ -1,0 +1,21 @@
+# База строковых паттернов LuxeMalware (YARA-lite)
+# Формат: <строка><TAB><название>  (разделитель — табуляция)
+# Поиск ведётся как точное вхождение (grep -F / Contains).
+
+EICAR-STANDARD-ANTIVIRUS-TEST-FILE	EICAR-Test-File
+/bin/bash -i >& /dev/tcp/	Shell.Reverse.TCP
+/dev/tcp/	Shell.DevTcp
+powershell -enc	PS.EncodedCommand
+Invoke-WebRequest	PS.InvokeWebRequest
+DownloadString	PS.DownloadString
+curl %7C sh	Linux.CurlPipeSh
+curl | sh	Linux.CurlPipeSh
+wget -O - | sh	Linux.WgetPipeSh
+curl http	Linux.CurlPipeBash
+wget http	Linux.WgetPipeBash
+certutil -urlcache	Win.CertUtil.Download
+regsvr32 /s /u /i:http	Win.Regsvr32.Combo
+powershell.exe -w hidden	Win.PS.Hidden
+base64 -d | sh	Linux.Base64Exec
+eval(base64_decode	PHP.EvalBase64
+document.write(unescape	JS.Obfuscation

@@ -1,0 +1,37 @@
+# LuxeOS-Win8 .gitignore
+
+# Base Windows ISO must NEVER be committed (licensing + size).
+# Provide it via GitHub secret WIN81_ISO_URL instead.
+*.iso
+*.esd
+*.wim
+
+# Build working directories
+work/
+out/
+mount/
+C:/work/
+C:/src.iso
+C:/LuxeOS.iso
+
+# LuxeOS runtime data (generated on the deployed system)
+ProgramData/
+Quarantine/
+luxemalware.log
+tweak-state.json
+
+# Windows / OS noise
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor / OS temp
+*.tmp
+*~
+
+# PowerShell
+*.ps1xml
+$RECYCLE.BIN/
+
+# Local tooling used only to bootstrap git in this sandbox (not part of the OS)
+.tools_git/
