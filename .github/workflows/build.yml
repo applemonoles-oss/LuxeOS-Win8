@@ -35,6 +35,8 @@ jobs:
           if (Test-Path $p) { Write-Host ">> oscdimg ready: $p" } else { throw "ADK install failed - oscdimg not found" }
 
       - name: Download Windows 8.1 source ISO
+        env:
+          WIN81_ISO_URL: ${{ secrets.WIN81_ISO_URL }}
         shell: pwsh
         run: |
           $url = if ($env:WIN81_ISO_URL) { $env:WIN81_ISO_URL }
